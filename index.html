@@ -198,8 +198,8 @@ const PIV = {
   shoulderUpR: [778, 792],
   elbowUpL:    [162, 646],   // 举手差分：肘
   elbowUpR:    [836, 652],
-  tailRoot:  [252, 1178],
-  tailMid:   [760, 1640],
+  tailRoot:  [235, 1245],   // 尾根（藏在裙后）
+  tailMid:   [660, 1570],   // 尾干从右腿后伸出、接上尾鳍的位置
   hairRoot:  [452, 520],
   ahogeRoot: [441, 243],
   finL:      [238, 412],
@@ -442,10 +442,10 @@ function deform(name, x, y, out){
        根部权重严格为 0（否则尾根会从裙底脱开），
        尾尖幅度最大并带相位滞后，看起来是"一条软的尾巴在甩"，
        而不是"一整节硬掰 + 一节留在原地"。 */
-  if(name==='Tail' || name==='Tail_Back'){
+  if(name==='Tail'){
     const d  = Math.hypot(x-PIV.tailRoot[0], y-PIV.tailRoot[1]);
-    const w1 = smoothstep(18, 320, d);      // 根部 → 中段
-    const w2 = smoothstep(240, 640, d);     // 中段 → 尾尖
+    const w1 = smoothstep(18, 300, d);      // 根部 → 中段
+    const w2 = smoothstep(380, 780, d);     // 中段 → 尾尖
     const ph = S.t*1.30;
     const a1 = (S.tail*2.2 + Math.sin(ph)*1.1) * w1;
     const a2 = (S.tail*3.4 + Math.sin(ph-0.95)*2.3) * w2;
@@ -632,7 +632,7 @@ function updateAct(dt){
   else S.wave = lerp(S.wave, 0, 0.12);
 }
 
-/* 每层透明度：两套手臂 + 腰部补白交叉淡化 */
+/* 每层透明度：两套手臂 + 身体底板 + 腰部补白交叉淡化 */
 function applyPose(){
   for(const L of layers){
     const n = L.name;
@@ -645,6 +645,9 @@ function applyPose(){
     else if(n === 'ArmUp_Upper_L' || n === 'ArmUp_Lower_L') a = mL;
     else if(n === 'ArmUp_Upper_R' || n === 'ArmUp_Lower_R') a = mR;
     else if(n === 'Hand_L') a = 1 - mL;
+    // 身体底板：举手时换成"去掉叉腰手臂"的那张，腰侧才不会出现原画手臂残影
+    else if(n === 'Base_Body') a = (mL > 0.5 || mR > 0.5) ? 0 : 1;
+    else if(n === 'Base_NoArm') a = (mL > 0.5 || mR > 0.5) ? 1 : 0;
     else if(n === 'Hat') a = S.hat;
     L.alpha = a;
   }

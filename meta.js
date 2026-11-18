@@ -1,9 +1,9 @@
 const LAYER_META = {
  "Base_Body":{"x":0,"y":202,"w":1024,"h":1873},
+ "Base_NoArm":{"x":0,"y":202,"w":1024,"h":1873},
  "Hair_Back":{"x":35,"y":275,"w":821,"h":1099},
- "Tail_Back":{"x":254,"y":1287,"w":382,"h":426},
+ "Tail":{"x":104,"y":1148,"w":917,"h":734},
  "Legs":{"x":219,"y":1240,"w":422,"h":833},
- "Tail":{"x":102,"y":1154,"w":918,"h":561},
  "Skirt":{"x":139,"y":997,"w":555,"h":249},
  "Torso":{"x":172,"y":556,"w":576,"h":506},
  "Arm_Upper_L":{"x":103,"y":605,"w":205,"h":307},
@@ -24,7 +24,7 @@ const LAYER_META = {
  "Hat":{"x":282,"y":179,"w":375,"h":238}
 };
 const LAYER_ORDER = [
-  "Base_Body","Hair_Back","Tail_Back","Legs","Tail","Skirt",
+  "Base_Body","Base_NoArm","Hair_Back","Tail","Legs","Skirt",
   "Torso","Arm_Upper_L","Arm_Lower_L","Hand_L","Arm_Upper_R","Arm_Lower_R",
   "Eye_L","Eye_R","Hair_Front","ArmUp_Upper_L","ArmUp_Lower_L","ArmUp_Upper_R",
   "ArmUp_Lower_R","FinEar_L","Headdress","Ahoge","Hat"
