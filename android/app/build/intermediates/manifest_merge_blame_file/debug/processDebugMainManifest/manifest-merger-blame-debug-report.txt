@@ -1,0 +1,66 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.kdk.whalepet"
+4    android:versionCode="1"
+5    android:versionName="0.1" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:3:5-77
+11-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:3:22-75
+12    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+12-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:4:5-76
+12-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:4:22-74
+13    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+13-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:5:5-88
+13-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:5:22-86
+14
+15    <application
+15-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:6:5-23:19
+16        android:debuggable="true"
+17        android:extractNativeLibs="false"
+18        android:icon="@drawable/ic_pet"
+18-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:8:9-40
+19        android:label="鲸鱼娘桌宠"
+19-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:7:9-30
+20        android:theme="@android:style/Theme.Material.Light.NoActionBar" >
+20-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:9:9-72
+21        <activity
+21-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:10:9-15:20
+22            android:name="com.kdk.whalepet.MainActivity"
+22-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:10:19-47
+23            android:exported="true" >
+23-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:10:48-71
+24            <intent-filter>
+24-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:11:13-14:29
+25                <action android:name="android.intent.action.MAIN" />
+25-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:12:17-68
+25-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:12:25-66
+26
+27                <category android:name="android.intent.category.LAUNCHER" />
+27-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:13:17-76
+27-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:13:27-74
+28            </intent-filter>
+29        </activity>
+30
+31        <service
+31-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:16:9-22:19
+32            android:name="com.kdk.whalepet.PetOverlayService"
+32-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:17:13-46
+33            android:exported="false"
+33-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:18:13-37
+34            android:foregroundServiceType="specialUse" >
+34-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:19:13-55
+35            <property
+35-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:20:13-21:41
+36                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+36-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:20:23-82
+37                android:value="悬浮桌宠窗口" />
+37-->/root/workspace/eadfacf9-01d3-4cf7-8f8c-74f82c89c98d/whalegirl/android/app/src/main/AndroidManifest.xml:21:17-39
+38        </service>
+39    </application>
+40
+41</manifest>

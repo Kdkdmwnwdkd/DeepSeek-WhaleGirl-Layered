@@ -1,0 +1,31 @@
+const LAYER_META = {
+ "Base_Body":{"x":0,"y":202,"w":1024,"h":1873},
+ "Base_NoArm":{"x":0,"y":202,"w":1024,"h":1873},
+ "Hair_Back":{"x":35,"y":275,"w":821,"h":1099},
+ "Tail":{"x":104,"y":1148,"w":917,"h":734},
+ "Legs":{"x":219,"y":1240,"w":422,"h":833},
+ "Skirt":{"x":139,"y":997,"w":555,"h":249},
+ "Torso":{"x":172,"y":556,"w":576,"h":506},
+ "Arm_Upper_L":{"x":103,"y":605,"w":205,"h":307},
+ "Arm_Lower_L":{"x":179,"y":853,"w":149,"h":125},
+ "Hand_L":{"x":288,"y":900,"w":123,"h":91},
+ "Arm_Upper_R":{"x":539,"y":591,"w":137,"h":209},
+ "Arm_Lower_R":{"x":479,"y":823,"w":165,"h":155},
+ "Eye_L":{"x":331,"y":417,"w":104,"h":92},
+ "Eye_R":{"x":461,"y":421,"w":102,"h":92},
+ "Hair_Front":{"x":273,"y":297,"w":319,"h":433},
+ "ArmUp_Upper_L":{"x":56,"y":609,"w":230,"h":151},
+ "ArmUp_Lower_L":{"x":38,"y":403,"w":245,"h":229},
+ "ArmUp_Upper_R":{"x":686,"y":609,"w":183,"h":151},
+ "ArmUp_Lower_R":{"x":731,"y":412,"w":211,"h":220},
+ "FinEar_L":{"x":195,"y":383,"w":96,"h":102},
+ "Headdress":{"x":265,"y":219,"w":315,"h":185},
+ "Ahoge":{"x":407,"y":201,"w":76,"h":54},
+ "Hat":{"x":282,"y":179,"w":375,"h":238}
+};
+const LAYER_ORDER = [
+  "Base_Body","Base_NoArm","Hair_Back","Tail","Legs","Skirt",
+  "Torso","Arm_Upper_L","Arm_Lower_L","Hand_L","Arm_Upper_R","Arm_Lower_R",
+  "Eye_L","Eye_R","Hair_Front","ArmUp_Upper_L","ArmUp_Lower_L","ArmUp_Upper_R",
+  "ArmUp_Lower_R","FinEar_L","Headdress","Ahoge","Hat"
+];
