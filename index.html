@@ -307,8 +307,11 @@ let ready = false;
 function buildLayer(name, img){
   const m = LAYER_META[name];
   const w = m.w, h = m.h;
-  const nx = clamp(Math.ceil(w/26), 4, 34);
-  const ny = clamp(Math.ceil(h/26), 4, 34);
+  // 尾巴又长又弯，网格太粗会在尾鳍与尾干的接缝处拉出透明缝
+  const cell = (name === 'Tail') ? 16 : 26;
+  const cap  = (name === 'Tail') ? 72 : 34;
+  const nx = clamp(Math.ceil(w/cell), 4, cap);
+  const ny = clamp(Math.ceil(h/cell), 4, cap);
   const nv = (nx+1)*(ny+1);
 
   const base = new Float32Array(nv*2);   // 初始像素坐标
@@ -443,19 +446,23 @@ function deform(name, x, y, out){
        尾尖幅度最大并带相位滞后，看起来是"一条软的尾巴在甩"，
        而不是"一整节硬掰 + 一节留在原地"。 */
   if(name==='Tail'){
+    /* 只做一次旋转，角度沿尾长平滑累加。
+       原来的写法是两次链式 rotAround：远端顶点被叠加旋转两次，
+       相邻顶点的位移差在尾鳍根部突然放大，把贴图拉出一条约 10px 的透明缝。
+       这里把两段角度合成一个连续的角度场 θ(d)，位移对 d 单调，不会再撕开。 */
     const d  = Math.hypot(x-PIV.tailRoot[0], y-PIV.tailRoot[1]);
-    const w1 = smoothstep(18, 300, d);      // 根部 → 中段
-    const w2 = smoothstep(380, 780, d);     // 中段 → 尾尖
     const ph = S.t*1.30;
-    const a1 = (S.tail*2.2 + Math.sin(ph)*1.1) * w1;
-    const a2 = (S.tail*3.4 + Math.sin(ph-0.95)*2.3) * w2;
-    const a1r = a1*D2R, a2r = a2*D2R;
-    // 第一关节：尾根
-    [nx, ny] = rotAround(nx, ny, PIV.tailRoot[0], PIV.tailRoot[1], a1r);
-    // 第二关节：中段（枢轴已被第一关节带走）
-    const [jx, jy] = rotAround(PIV.tailMid[0], PIV.tailMid[1],
-                               PIV.tailRoot[0], PIV.tailRoot[1], a1r);
-    [nx, ny] = rotAround(nx, ny, jx, jy, a2r);
+    /* 关键：角度只在根部 0→260px 内爬升，之后保持恒定。
+       如果角度继续随 d 增长，尾鳍和尾干的旋转量不同，
+       两者之间的贴图连接带会被拉开，就是那条白色裂缝。
+       变成刚性摆动 + 轻微行波平移后，尾鳍与尾干相对位置不变，不会再撕。 */
+    const A = S.tail*4.2 + Math.sin(ph)*1.2;
+    const w = smoothstep(8, 260, d);
+    [nx, ny] = rotAround(nx, ny, PIV.tailRoot[0], PIV.tailRoot[1], A*w*D2R);
+    // 行波用纯平移（不改局部尺度），尾尖滞后一点，看起来仍是软的
+    const wv = Math.sin(ph - d/280) * 3.4 * smoothstep(120, 900, d);
+    nx += wv;
+    ny += wv*0.22;
   }
 
   /* ---- 5. 手臂：肩→肘 双骨骼链 ---- */
