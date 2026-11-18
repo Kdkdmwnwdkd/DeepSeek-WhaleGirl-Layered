@@ -166,7 +166,7 @@
       <input type="range" id="p-bz" min="-100" max="100" value="0"></div>
 
     <div class="grp">
-      <label>图层（24）</label>
+      <label>图层（23）</label>
       <div class="layers" id="layerList"></div>
       <p class="note">鼠标划过画面会热高亮对应部位；所有变形都是 GPU 网格弯曲，不是整体旋转。</p>
     </div>
@@ -364,7 +364,7 @@ function buildLayer(name, img){
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.bindVertexArray(null);
 
-  layers.push({name, m, nx, ny, nv, base, pos, vao, pb, tex, idxCount: idx.length});
+  layers.push({name, m, img, nx, ny, nv, base, pos, vao, pb, tex, idxCount: idx.length});
 }
 
 /* =========================================================
@@ -515,10 +515,11 @@ function deform(name, x, y, out){
    渲染循环
    ========================================================= */
 let last = performance.now(), fpsAcc = 0, fpsCnt = 0;
+let rafId = 0, drawTick = 0;
 const tmp = [0,0];
 
 function frame(now){
-  if(S.frozen){ requestAnimationFrame(frame); return; }
+  if(S.frozen){ rafId = 0; return; }
   const dt = Math.min(60, now-last); last = now;
   S.dt = dt; S.t += dt/1000;
   S.breathPhase += dt/1000 * 1.55;
@@ -537,6 +538,8 @@ function frame(now){
   }
 
   applyPose();
+  // 空闲时降到 30fps：呼吸/尾巴的逻辑照常算，只把 GPU 绘制减半
+  if(S.act==='idle' && !pointer && (drawTick++ & 1)){ rafId = requestAnimationFrame(frame); return; }
   draw();
 
   fpsAcc += dt; fpsCnt++;
@@ -544,7 +547,7 @@ function frame(now){
     document.getElementById('fps').textContent = Math.round(1000*fpsCnt/fpsAcc) + ' fps';
     fpsAcc = 0; fpsCnt = 0;
   }
-  requestAnimationFrame(frame);
+  rafId = requestAnimationFrame(frame);
 }
 
 function draw(){
@@ -587,8 +590,17 @@ function draw(){
 /* =========================================================
    动作编排
    ========================================================= */
+/* 每个动作的时长（秒）。到点自动回 idle，不依赖调用方收尾。 */
+const ACT_DUR = { hello: 3.2, armsup: 2.8, sway: 6.0 };
+
 function updateAct(dt){
-  S.actT += dt/1000;
+  // 用真实时间算动作进度：掉帧时 dt 会被截断，累计值会拖长动作
+  if(!S.actStart) S.actStart = performance.now();
+  S.actT = (performance.now() - S.actStart) / 1000;
+  // 兜底收尾：不管动作是按钮、点击还是安卓端 evaluateJavascript 触发的，
+  // 都从这里回 idle，避免 act 卡在 hello 一直举手。
+  const dur = ACT_DUR[S.act];
+  if(dur && S.actT > dur) setAct('idle');
   const ease = (a,b,t)=>lerp(a,b,1-Math.pow(0.001, dt/1000*3));
 
   if(S.act==='idle'){
@@ -600,7 +612,7 @@ function updateAct(dt){
     if(S.axAuto !== false){ /* 由鼠标驱动 */ }
   }else if(S.act==='hello'){
     const t = S.actT;
-    const on = t < 2.9;
+    const on = t < 2.4;
     S.armR = lerp(S.armR, on ? 0.52 : 0, 0.07);
     S.bodyZ = lerp(S.bodyZ, on ? -0.16 : 0, 0.05);
     S.az   = lerp(S.az, on ? -0.16 + Math.sin(t*7)*0.06 : 0, 0.07);
@@ -608,7 +620,7 @@ function updateAct(dt){
     S.tail = Math.sin(S.t*1.9)*0.85;
   }else if(S.act==='armsup'){
     const t = S.actT;
-    const on = t<2.6;
+    const on = t<2.0;
     S.armL = lerp(S.armL, on?0.6:0, 0.08);
     S.armR = lerp(S.armR, on?0.6:0, 0.08);
     S.az   = lerp(S.az, on?-0.06:0, 0.06);
@@ -622,9 +634,11 @@ function updateAct(dt){
     S.armR  = 0.12 - Math.sin(S.t*1.9)*0.06;
   }
 
-  /* 差分举手量 */
-  const wantL = (S.act==='armsup' || S.act==='hello') ? 1 : 0;   // 打招呼也双手举：单举时另一侧会露出原图叉腰的手臂
-  const wantR = (S.act==='armsup' || S.act==='hello') ? 1 : 0;
+  /* 差分举手量：跟动作时间挂钩，收尾前 0.4s 放下，动作结束自然回到 idle 姿势 */
+  const liftUntil = S.act==='hello' ? 2.4 : S.act==='armsup' ? 2.0 : 0;
+  const lifting = S.actT < liftUntil;
+  const wantL = lifting ? 1 : 0;   // 打招呼也双手举：单举时另一侧会露出原图叉腰的手臂
+  const wantR = lifting ? 1 : 0;
   S.liftL = lerp(S.liftL, wantL, 0.3);
   S.liftR = lerp(S.liftR, wantR, 0.3);
   S.hat = lerp(S.hat, S.hatOn ? 1 : 0, 0.12);
@@ -694,7 +708,7 @@ document.getElementById('hatBtn').addEventListener('click', e=>{
 });
 
 function setAct(name){
-  S.act = name; S.actT = 0;
+  S.act = name; S.actT = 0; S.actStart = performance.now();
   document.querySelectorAll('.dock button').forEach(b=>{
     b.classList.toggle('on', b.dataset.act===name);
   });
@@ -752,7 +766,31 @@ LAYER_ORDER.forEach((n,i)=>{
 });
 
 window.freeze = ()=>{ S.frozen = true; };
+window.unfreeze = ()=>{
+  if(!S.frozen) return;
+  S.frozen = false; last = performance.now();
+  if(!rafId) rafId = requestAnimationFrame(frame);
+};
 window.redraw = ()=> draw();
+
+/* 给安卓壳做点击命中测试：把当前姿态的各层合成成一张低分辨率 alpha 掩码，
+   '1' 表示该格有内容。壳子用它区分「点在人物身上」还是「点在旁边空气里」。 */
+window.hitMask = function(cols, rows){
+  const cv = document.createElement('canvas');
+  cv.width = cols; cv.height = rows;
+  const c = cv.getContext('2d');
+  for(const L of layers){
+    const m = L.m;
+    if(!m || !L.img || L.alpha === 0) continue;
+    c.drawImage(L.img,
+      (m.x/CW)*cols, ((m.y-VY)/VH)*rows,
+      (m.w/CW)*cols, (m.h/VH)*rows);
+  }
+  const d = c.getImageData(0, 0, cols, rows).data;
+  let s = '';
+  for(let i=3;i<d.length;i+=4) s += d[i] > 24 ? '1' : '0';
+  return s;
+};
 
 (async function boot(){
   const imgs = await Promise.all(LAYER_ORDER.map(n=>new Promise((res,rej)=>{
